@@ -1,83 +1,49 @@
 use std::ops::*;
 
-pub type Point = Vec3<f64>;
-pub type Vector = Vec3<f64>;
-pub type Color = Vec3<u8>;
-
-pub trait Numeric:
-    Add<Output = Self>
-    + Sub<Output = Self>
-    + Mul<Output = Self>
-    + Div<Output = Self>
-    + PartialEq
-    + Sized
-    + Copy
-    + Clone
-{
-    fn is_signed() -> bool;
-    fn sqrt(self) -> Self;
-}
-
-impl Numeric for u8 {
-    fn is_signed() -> bool {
-        false
-    }
-
-    fn sqrt(self) -> Self {
-        self.sqrt()
-    }
-}
-
-impl Numeric for f64 {
-    fn is_signed() -> bool {
-        true
-    }
-
-    fn sqrt(self) -> Self {
-        self.sqrt()
-    }
-}
+pub type Point = Vec3;
+pub type Vector = Vec3;
+pub type Color = Vec3;
 
 #[derive(Debug, Default, Clone, PartialEq, Copy)]
-pub struct Vec3<T: Numeric> {
-    x: T,
-    y: T,
-    z: T,
+pub struct Vec3{
+    x: f32,
+    y: f32,
+    z: f32,
 }
 
-impl<T: Numeric> Vec3<T> {
-    pub fn new(x: T, y: T, z: T) -> Vec3<T> {
+impl Vec3 {
+    pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
         Self { x, y, z }
     }
-    pub fn x(&self) -> T {
+    pub fn x(&self) -> f32 {
         self.x
     }
 
-    pub fn y(&self) -> T {
+    pub fn y(&self) -> f32 {
         self.y
     }
 
-    pub fn z(&self) -> T {
+    pub fn z(&self) -> f32 {
         self.z
     }
 
-    pub fn sum(&self) -> T {
+    pub fn sum(&self) -> f32 {
         self.x + self.y + self.z
     }
 
-    pub fn mag(&self) -> T {
+    pub fn mag(&self) -> f32 {
         self.mag_sq().sqrt()
     }
 
-    pub fn mag_sq(&self) -> T {
+    pub fn mag_sq(&self) -> f32 {
         self.dot(self)
     }
 
-    pub fn dot(&self, other: &Vec3<T>) -> T {
+    pub fn dot(&self, other: &Vec3) -> f32 {
         (*self * *other).sum()
     }
 
-    pub fn cross(&self, other: &Vec3<T>) -> Vec3<T> {
+    pub fn cross(&self, other: &Vec3) -> Vec3 {
         Self {
             x: self.y * other.z - self.z * other.y,
             y: self.z * other.x - self.x * other.z,
@@ -85,12 +51,12 @@ impl<T: Numeric> Vec3<T> {
         }
     }
 
-    pub fn unit_vector(&self) -> Vec3<T> {
+    pub fn unit_vector(&self) -> Vec3 {
         *self / self.mag()
     }
 }
 
-impl<T: Numeric> Add for Vec3<T> {
+impl Add for Vec3 {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self {
@@ -102,7 +68,7 @@ impl<T: Numeric> Add for Vec3<T> {
     }
 }
 
-impl<T: Numeric> Sub for Vec3<T> {
+impl Sub for Vec3 {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self {
@@ -114,7 +80,7 @@ impl<T: Numeric> Sub for Vec3<T> {
     }
 }
 
-impl<T: Numeric> Mul for Vec3<T> {
+impl Mul for Vec3 {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self {
@@ -126,10 +92,10 @@ impl<T: Numeric> Mul for Vec3<T> {
     }
 }
 
-impl<T: Numeric> Mul<T> for Vec3<T> {
+impl Mul<f32> for Vec3 {
     type Output = Self;
 
-    fn mul(self, rhs: T) -> Self {
+    fn mul(self, rhs: f32) -> Self {
         Self {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -138,7 +104,7 @@ impl<T: Numeric> Mul<T> for Vec3<T> {
     }
 }
 
-impl<T: Numeric> Div for Vec3<T> {
+impl Div for Vec3 {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self {
@@ -150,10 +116,10 @@ impl<T: Numeric> Div for Vec3<T> {
     }
 }
 
-impl<T: Numeric> Div<T> for Vec3<T> {
+impl Div<f32> for Vec3 {
     type Output = Self;
 
-    fn div(self, rhs: T) -> Self {
+    fn div(self, rhs: f32) -> Self {
         Self {
             x: self.x / rhs,
             y: self.y / rhs,
@@ -162,11 +128,11 @@ impl<T: Numeric> Div<T> for Vec3<T> {
     }
 }
 
-// impl<T: Numeric> Neg for Vec3<T> {
+// impl Neg for Vec3 {
 //     type Output = Self;
 
 //     fn neg(self) -> Self {
-//         if T::is_signed() {
+//         if f32::is_signed() {
 //             Self {
 //                 x: -self.x,
 //                 y: -self.y,
@@ -178,7 +144,7 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T: AddAssign + Numeric> AddAssign for Vec3<T> {
+// impl<f32: AddAssign + Numeric> AddAssign for Vec3 {
 //     fn add_assign(&mut self, rhs: Self) {
 //         *self = Self {
 //             x: self.x + rhs.x,
@@ -188,7 +154,7 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T: SubAssign + Numeric> SubAssign for Vec3<T> {
+// impl<f32: SubAssign + Numeric> SubAssign for Vec3 {
 //     fn sub_assign(&mut self, rhs: Self) {
 //         *self = Self {
 //             x: self.x - rhs.x,
@@ -198,7 +164,7 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T: MulAssign + Numeric> MulAssign for Vec3<T> {
+// impl<f32: MulAssign + Numeric> MulAssign for Vec3 {
 //     fn mul_assign(&mut self, rhs: Self) {
 //         *self = Self {
 //             x: self.x * rhs.x,
@@ -208,7 +174,7 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T: DivAssign + Numeric> DivAssign for Vec3<T> {
+// impl<f32: DivAssign + Numeric> DivAssign for Vec3 {
 //     fn div_assign(&mut self, rhs: Self) {
 //         *self = Self {
 //             x: self.x / rhs.x,
@@ -273,9 +239,9 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T> Div<Vec3<T>> for Vec3<T>
+// impl Div<Vec3> for Vec3
 // where
-//     T: Numeric + Clone,
+//     f32: Numeric + Clone,
 // {
 //     type Output = Self;
 
@@ -288,13 +254,13 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T> Div<T> for Vec3<T>
+// impl Div for Vec3
 // where
-//     T: Numeric + Clone,
+//     f32: Numeric + Clone,
 // {
 //     type Output = Self;
 
-//     fn div(self, rhs: T) -> Self {
+//     fn div(self, rhs: f32) -> Self {
 //         Self {
 //             x: self.x / rhs,
 //             y: self.y / rhs,
@@ -303,9 +269,9 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T> Neg for Vec3<T>
+// impl Neg for Vec3
 // where
-//     T: Numeric + Clone,
+//     f32: Numeric + Clone,
 // {
 //     type Output = Self;
 
@@ -318,9 +284,9 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T> AddAssign<Vec3<T>> for Vec3<T>
+// impl AddAssign<Vec3> for Vec3
 // where
-//     T: Numeric + Clone,
+//     f32: Numeric + Clone,
 // {
 //     fn add_assign(&mut self, other: Self) {
 //         *self = Self {
@@ -331,9 +297,9 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T> SubAssign<Vec3<T>> for Vec3<T>
+// impl SubAssign<Vec3> for Vec3
 // where
-//     T: Numeric + Clone,
+//     f32: Numeric + Clone,
 // {
 //     fn sub_assign(&mut self, other: Self) {
 //         *self = Self {
@@ -344,9 +310,9 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T> MulAssign<Vec3<T>> for Vec3<T>
+// impl MulAssign<Vec3> for Vec3
 // where
-//     T: Numeric + Clone,
+//     f32: Numeric + Clone,
 // {
 //     fn mul_assign(&mut self, other: Self) {
 //         *self = Self {
@@ -357,11 +323,11 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T> DivAssign<T> for Vec3<T>
+// impl DivAssign for Vec3
 // where
-//     T: Numeric + Clone,
+//     f32: Numeric + Clone,
 // {
-//     fn div_assign(&mut self, rhs: T) {
+//     fn div_assign(&mut self, rhs: f32) {
 //         *self = Self {
 //             x: self.x / rhs,
 //             y: self.y / rhs,
@@ -370,9 +336,9 @@ impl<T: Numeric> Div<T> for Vec3<T> {
 //     }
 // }
 
-// impl<T> DivAssign<Vec3<T>> for Vec3<T>
+// impl DivAssign<Vec3> for Vec3
 // where
-//     T: Numeric + Clone,
+//     f32: Numeric + Clone,
 // {
 //     fn div_assign(&mut self, other: Self) {
 //         *self = Self {

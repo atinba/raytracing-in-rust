@@ -1,27 +1,32 @@
-mod vec3;
 mod ray;
+mod vec3;
 
 use vec3::*;
 
-
+use std::fs::File;
+use std::io::prelude::*;
 
 fn main() {
-    let (w, h) = (256, 256);
+    let aspect_ratio = 16. / 9.;
+    let width = 256;
+    let height = (width as f64 / aspect_ratio) as i32;
 
-    println!("P3\n{} {}\n255", w, h);
+    let mut img_data = String::new();
+    img_data.push_str(&format!("P3\n{} {}\n255\n", width, height));
 
-
-
-    for j in 0..h {
-        eprintln!("\rScanlines remaining: {} ", h - j);
-        for i in 0..w {
-            let r = 255 * i / (w - 1);
-            let g = 255 * j / (h - 1);
+    for j in 0..height {
+        eprintln!("\rScanlines remaining: {} ", height - j);
+        for i in 0..width {
+            let r = 255 * i / (width - 1);
+            let g = 255 * j / (height - 1);
             let b = 0;
 
-            let rgb = Color::new(r as u8, g as u8, b as u8);
-
-            println!("{} {} {}", r, g, b);
+            img_data.push_str(&format!("{r} {g} {b}\n"));
         }
     }
+
+    File::create("img.ppm")
+        .expect("Create failed.")
+        .write_all(img_data.as_bytes())
+        .expect("Write failed.");
 }

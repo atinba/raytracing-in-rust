@@ -14,7 +14,7 @@ impl Ray {
         self.dir
     }
 
-    fn at(&self, t: f64) -> Point {
+    fn at(&self, t: f32) -> Point {
         self.orig + self.dir * t
     }
 }
